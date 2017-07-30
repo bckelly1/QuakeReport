@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,10 @@ public class EarthquakeActivity extends AppCompatActivity
     /** URL for earthquake data from the USGS dataset */
     private static final String USGS_REQUEST_URL =
             "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=6&limit=10";
+
+    private static final String NO_DATA_STRING = "No earthquake data found";
+
+    private static TextView emptyStateTextView;
 
     /**
      * Constant value for the earthquake loader ID. We can choose any integer.
@@ -54,6 +59,8 @@ public class EarthquakeActivity extends AppCompatActivity
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list_earthquakes);
+        emptyStateTextView = (TextView) findViewById(R.id.emptyTextView);
+        earthquakeListView.setEmptyView(emptyStateTextView);
 
         // Create a new adapter that takes an empty list of earthquakes as input
         mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
@@ -106,11 +113,18 @@ public class EarthquakeActivity extends AppCompatActivity
         if (earthquakes != null && !earthquakes.isEmpty()) {
             mAdapter.addAll(earthquakes);
         }
+        else{
+            setEmptyView(NO_DATA_STRING);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Earthquake>> loader) {
         // Loader reset, so we can clear out our existing data.
         mAdapter.clear();
+    }
+
+    public void setEmptyView(String text){
+        emptyStateTextView.setText(text);
     }
 }
